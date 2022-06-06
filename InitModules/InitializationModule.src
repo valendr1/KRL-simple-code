@@ -1,0 +1,13 @@
+&ACCESS RV
+DEF InitializationModule ( )
+   
+END
+
+GLOBAL DEF InitializeAll()
+   SetConveyorState(1,#SET_RESET,0)
+   SetConveyorState(2,#SET_RESET,0)
+   button_start=FALSE
+   button_stop=FALSE
+   SetConveyorState(1,#SET_STOP,0)
+   SetConveyorState(2,#SET_STOP,0)
+END

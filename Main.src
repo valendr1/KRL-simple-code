@@ -1,0 +1,20 @@
+﻿DEF Main ( )
+   modulesInit=FALSE
+   InitializeAll()
+   modulesInit=TRUE
+   
+   LOOP
+      IF (button_start) THEN 
+         button_start=FALSE
+         SetConveyorState(1,#SET_FWD,50)
+         SetConveyorState(2,#SET_FWD,75)
+      ELSE
+         IF (button_stop) THEN
+            button_stop=FALSE
+            SetConveyorState(1,#SET_STOP,0)
+            SetConveyorState(2,#SET_STOP,0)
+         ENDIF
+      ENDIF
+      
+   ENDLOOP
+END

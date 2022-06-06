@@ -1,0 +1,3 @@
+﻿DEFDAT Main PUBLIC
+   DECL BOOL modulesInit=FALSE
+ENDDAT

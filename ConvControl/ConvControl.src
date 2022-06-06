@@ -1,0 +1,91 @@
+
+DEF ConvControl ( )
+   
+END
+
+
+GLOBAL DEF SetConveyorState(CONV_NUM:IN, COMMAND:IN, SET_SPEED:IN)
+   INT CONV_NUM, SET_SPEED
+   DECL SET_CONVCOMMAND_T COMMAND
+   
+   IF  COMMAND == #SET_RESET THEN
+      IF (CONV_NUM == 1)THEN
+         PULSE ( do_M1_RESET, true, 0.5 )
+      ENDIF
+      IF (CONV_NUM == 2)THEN
+         PULSE ( do_M2_RESET, true, 0.5 )
+      ENDIF
+      RETURN
+   ENDIF
+   
+   IF(CONV_NUM<1)THEN
+      msgnotify("Conv Control","Conv num < 1")
+      RETURN
+   ENDIF
+   
+   SWITCH COMMAND
+      CASE #SET_FWD
+         IF (CONV_NUM == 1)THEN
+            do_M1_RESET = FALSE
+            do_M1_REV = FALSE 
+            do_M1_FWD = TRUE
+         ENDIF
+         IF (CONV_NUM == 2)THEN
+            do_M2_RESET = FALSE
+            do_M2_REV = FALSE
+            do_M2_FWD = TRUE
+         ENDIF
+         
+      CASE #SET_REV
+         IF (CONV_NUM == 1)THEN
+            do_M1_RESET = FALSE
+            do_M1_FWD = FALSE
+            do_M1_REV = TRUE
+         ENDIF
+         IF (CONV_NUM == 2)THEN
+            do_M2_RESET = FALSE
+            do_M2_FWD = FALSE
+            do_M2_REV = TRUE
+         ENDIF
+         
+      CASE #SET_STOP
+         IF (CONV_NUM == 1)THEN
+            do_M1_RESET = FALSE
+            do_M1_FWD = FALSE
+            do_M1_REV = FALSE
+         ENDIF
+         IF (CONV_NUM == 2)THEN
+            do_M2_RESET = FALSE
+            do_M2_FWD = FALSE
+            do_M2_REV = FALSE
+         ENDIF
+         
+      DEFAULT
+         RETURN
+         
+   ENDSWITCH
+   
+   IF (CONV_NUM == 1)THEN
+      do_M1_Frequency = L_GetFrequencyCode(SET_SPEED)
+   ENDIF
+   
+   IF (CONV_NUM == 2)THEN
+      do_M2_Frequency = L_GetFrequencyCode(SET_SPEED)
+   ENDIF
+   
+END
+
+
+DEFFCT INT L_GetFrequencyCode(SETTED_SPEED:IN)
+   INT SETTED_SPEED, SETTED_OUTPUT
+   SETTED_OUTPUT = SETTED_SPEED * CONVERT_COEF
+   IF (SETTED_OUTPUT < MIN_FREQUENCY) THEN
+      RETURN MIN_FREQUENCY
+   ENDIF
+   
+   IF (SETTED_OUTPUT > MAX_FREQUENCY) THEN
+      RETURN MAX_FREQUENCY
+   ENDIF
+   
+   RETURN SETTED_OUTPUT
+ENDFCT
